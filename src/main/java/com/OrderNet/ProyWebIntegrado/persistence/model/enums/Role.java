@@ -13,9 +13,18 @@ public enum Role {
             Permissions.EDIT_USER,
             Permissions.DELETE_USER,
             Permissions.READ_USER,
+            Permissions.CREATE_PRODUCT,
+            Permissions.EDIT_PRODUCT,
+            Permissions.DELETE_PRODUCT,
+            Permissions.VIEW_PRODUCT,
+            Permissions.VIEW_ORDER,
+            Permissions.EDIT_ORDER,
             Permissions.EDIT_WAITER)),
 
-    WAITER(Set.of());
+    WAITER(Set.of(
+            Permissions.CREATE_ORDER,
+            Permissions.VIEW_ORDER,
+            Permissions.EDIT_ORDER));
 
     private final Set<Permissions> permissions;
 
@@ -26,12 +35,9 @@ public enum Role {
     public List<SimpleGrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-
-        authorities.addAll(
-                permissions.stream()
-                        .map(permission -> new SimpleGrantedAuthority(permission.name()))
-                        .collect(Collectors.toList()));
-
+        authorities.addAll(permissions.stream()
+                .map(p -> new SimpleGrantedAuthority(p.name()))
+                .collect(Collectors.toList()));
         return authorities;
     }
 
