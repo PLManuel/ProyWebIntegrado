@@ -1,31 +1,39 @@
 package com.OrderNet.ProyWebIntegrado.persistence.model;
 
 import java.util.Collection;
-import java.util.Date;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
+@Table(name = "user")
 public class User implements UserDetails {
 
   @Id
@@ -33,18 +41,31 @@ public class User implements UserDetails {
   private Long id;
 
   private String name;
-  private String lastName;
+
+  @Column(unique = true, nullable = false)
   private String email;
+
+  @Column(nullable = false)
   private String password;
-  private Date creationDate;
-  private boolean status;
+
+  @Builder.Default
+  private Boolean active = false;
 
   @Enumerated(EnumType.STRING)
-  private Role roles;
+  @Column(nullable = false)
+  private Role role;
+
+  @OneToMany(mappedBy = "waiter", fetch = FetchType.LAZY)
+  @JsonManagedReference
+  private List<RestaurantTable> assignedTables;
+
+  // @OneToMany(mappedBy = "waiter", fetch = FetchType.LAZY)
+  // @JsonManagedReference
+  // private List<Order> createdOrders;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles.getAuthorities();
+    return role.getAuthorities();
   }
 
   @Override
