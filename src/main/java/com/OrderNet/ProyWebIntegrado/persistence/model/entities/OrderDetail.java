@@ -1,12 +1,8 @@
-package com.OrderNet.ProyWebIntegrado.persistence.model;
+package com.OrderNet.ProyWebIntegrado.persistence.model.entities;
 
-import com.OrderNet.ProyWebIntegrado.persistence.model.enums.TableStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,33 +18,26 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "restaurant_table")
+@Table(name = "order_detail")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class RestaurantTable {
-
+public class OrderDetail {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(unique = true, nullable = false)
-  private Integer number;
-
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private TableStatus status;
+  private Integer quantity;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "waiter")
+  @JoinColumn(name = "order_id")
   @JsonBackReference
-  private User waiter;
+  private Order order;
 
-  // @OneToMany(mappedBy = "table", cascade = CascadeType.ALL, fetch =
-  // FetchType.LAZY)
-  // @JsonManagedReference
-  // private List<Order> orders;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "product_id")
+  private Product product;
 }

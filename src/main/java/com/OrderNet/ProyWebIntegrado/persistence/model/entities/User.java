@@ -1,4 +1,4 @@
-package com.OrderNet.ProyWebIntegrado.persistence.model;
+package com.OrderNet.ProyWebIntegrado.persistence.model.entities;
 
 import java.util.Collection;
 import java.util.List;
@@ -59,9 +59,9 @@ public class User implements UserDetails {
   @JsonManagedReference
   private List<RestaurantTable> assignedTables;
 
-  // @OneToMany(mappedBy = "waiter", fetch = FetchType.LAZY)
-  // @JsonManagedReference
-  // private List<Order> createdOrders;
+  @OneToMany(mappedBy = "waiter", fetch = FetchType.LAZY)
+  @JsonManagedReference
+  private List<Order> createdOrders;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
