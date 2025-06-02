@@ -10,21 +10,24 @@ import java.util.stream.Collectors;
 public enum Role {
     ADMINISTRATOR(Set.of(
             Permissions.CREATE_USER,
-            Permissions.EDIT_USER,
-            Permissions.DELETE_USER,
             Permissions.READ_USER,
+            Permissions.UPDATE_USER,
+            Permissions.DELETE_USER,
+
             Permissions.CREATE_PRODUCT,
-            Permissions.EDIT_PRODUCT,
+            Permissions.READ_PRODUCT,
+            Permissions.UPDATE_PRODUCT,
             Permissions.DELETE_PRODUCT,
-            Permissions.VIEW_PRODUCT,
-            Permissions.VIEW_ORDER,
-            Permissions.EDIT_ORDER,
-            Permissions.EDIT_WAITER)),
+
+            Permissions.READ_ORDER,
+            Permissions.UPDATE_ORDER,
+            Permissions.DELETE_ORDER)),
 
     WAITER(Set.of(
             Permissions.CREATE_ORDER,
-            Permissions.VIEW_ORDER,
-            Permissions.EDIT_ORDER));
+            Permissions.READ_ORDER,
+            Permissions.UPDATE_ORDER,
+            Permissions.DELETE_ORDER));
 
     private final Set<Permissions> permissions;
 
