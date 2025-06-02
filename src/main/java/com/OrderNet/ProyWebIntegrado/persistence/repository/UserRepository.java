@@ -12,6 +12,6 @@ import com.OrderNet.ProyWebIntegrado.persistence.model.entities.User;
 public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findByEmail(String email);
 
-  List<User> findByRoleAndActiveTrue(Role role);
+  List<User> findByRole(Role role);
 
 }
