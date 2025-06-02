@@ -48,7 +48,7 @@ public class RestaurantTable {
   private TableStatus status;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "waiter")
+  @JoinColumn(name = "waiter_id")
   @JsonBackReference
   private User waiter;
 

@@ -49,7 +49,7 @@ public class User implements UserDetails {
   private String password;
 
   @Builder.Default
-  private Boolean active = false;
+  private Boolean active = true;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
