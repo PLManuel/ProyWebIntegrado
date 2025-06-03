@@ -49,11 +49,27 @@ public class Security {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/auth/**").permitAll()
 
-            .requestMatchers(HttpMethod.GET, "/user").hasAuthority(Permissions.READ_USER.toString())
-            .requestMatchers(HttpMethod.GET, "/user/*").hasAuthority(Permissions.READ_USER.toString())
-            .requestMatchers(HttpMethod.POST, "/user/create").hasAuthority(Permissions.CREATE_USER.toString())
-            .requestMatchers(HttpMethod.PUT, "/user/update/*").hasAuthority(Permissions.UPDATE_USER.toString())
-            .requestMatchers(HttpMethod.DELETE, "/user/delete/*").hasAuthority(Permissions.DELETE_USER.toString())
+            .requestMatchers(HttpMethod.GET, "/user")
+            .hasAuthority(Permissions.READ_USER.toString())
+            .requestMatchers(HttpMethod.GET, "/user/*")
+            .hasAuthority(Permissions.READ_USER.toString())
+            .requestMatchers(HttpMethod.POST, "/user/create")
+            .hasAuthority(Permissions.CREATE_USER.toString())
+            .requestMatchers(HttpMethod.PUT, "/user/update/*")
+            .hasAuthority(Permissions.UPDATE_USER.toString())
+            .requestMatchers(HttpMethod.DELETE, "/user/delete/*")
+            .hasAuthority(Permissions.DELETE_USER.toString())
+
+            .requestMatchers(HttpMethod.GET, "/category")
+            .hasAuthority(Permissions.READ_CATEGORY.toString())
+            .requestMatchers(HttpMethod.GET, "/category/*")
+            .hasAuthority(Permissions.READ_CATEGORY.toString())
+            .requestMatchers(HttpMethod.POST, "/category/create")
+            .hasAuthority(Permissions.CREATE_CATEGORY.toString())
+            .requestMatchers(HttpMethod.PUT, "/category/update/*")
+            .hasAuthority(Permissions.UPDATE_CATEGORY.toString())
+            .requestMatchers(HttpMethod.DELETE, "/category/delete/*")
+            .hasAuthority(Permissions.DELETE_CATEGORY.toString())
 
             .anyRequest().authenticated())
         .sessionManagement(

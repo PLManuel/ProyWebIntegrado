@@ -7,6 +7,12 @@ public enum Permissions {
   UPDATE_USER,
   DELETE_USER,
 
+  // Category management
+  CREATE_CATEGORY,
+  READ_CATEGORY,
+  UPDATE_CATEGORY,
+  DELETE_CATEGORY,
+
   // Product management
   CREATE_PRODUCT,
   READ_PRODUCT,
