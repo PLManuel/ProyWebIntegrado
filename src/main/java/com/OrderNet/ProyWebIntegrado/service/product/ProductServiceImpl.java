@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.OrderNet.ProyWebIntegrado.dto.category.CategoryDTO;
 import com.OrderNet.ProyWebIntegrado.dto.product.ProductCreateDTO;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
