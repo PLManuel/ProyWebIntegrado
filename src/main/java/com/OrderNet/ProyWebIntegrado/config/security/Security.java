@@ -71,6 +71,17 @@ public class Security {
             .requestMatchers(HttpMethod.DELETE, "/category/delete/*")
             .hasAuthority(Permissions.DELETE_CATEGORY.toString())
 
+            .requestMatchers(HttpMethod.GET, "/product")
+            .hasAuthority(Permissions.READ_PRODUCT.toString())
+            .requestMatchers(HttpMethod.GET, "/product/*")
+            .hasAuthority(Permissions.READ_PRODUCT.toString())
+            .requestMatchers(HttpMethod.POST, "/product/create")
+            .hasAuthority(Permissions.CREATE_PRODUCT.toString())
+            .requestMatchers(HttpMethod.PUT, "/product/update/*")
+            .hasAuthority(Permissions.UPDATE_PRODUCT.toString())
+            .requestMatchers(HttpMethod.DELETE, "/product/delete/*")
+            .hasAuthority(Permissions.DELETE_PRODUCT.toString())
+
             .anyRequest().authenticated())
         .sessionManagement(
             sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
