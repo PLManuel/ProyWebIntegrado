@@ -43,17 +43,17 @@ public class RestaurantTable {
   @Column(unique = true, nullable = false)
   private Integer number;
 
+  @Builder.Default
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private TableStatus status;
+  private TableStatus status = TableStatus.AVAILABLE;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "waiter_id")
+  @JoinColumn(name = "waiter_id", nullable = true)
   @JsonBackReference
   private User waiter;
 
-  @OneToMany(mappedBy = "table", cascade = CascadeType.ALL, fetch =
-  FetchType.LAZY)
+  @OneToMany(mappedBy = "table", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonManagedReference
   private List<Order> orders;
 }
