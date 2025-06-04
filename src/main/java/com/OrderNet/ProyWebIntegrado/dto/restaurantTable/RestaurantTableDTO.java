@@ -1,0 +1,22 @@
+package com.OrderNet.ProyWebIntegrado.dto.restaurantTable;
+
+import com.OrderNet.ProyWebIntegrado.dto.user.UserDTO;
+import com.OrderNet.ProyWebIntegrado.persistence.model.enums.TableStatus;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RestaurantTableDTO {
+  private Long id;
+  private Integer number;
+  private TableStatus status;
+  private UserDTO userDTO;
+}
