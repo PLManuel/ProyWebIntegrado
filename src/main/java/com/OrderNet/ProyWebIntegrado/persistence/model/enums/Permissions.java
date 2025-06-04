@@ -7,6 +7,12 @@ public enum Permissions {
   UPDATE_USER,
   DELETE_USER,
 
+  // Restaurant table management
+  CREATE_RESTAURANT_TABLE,
+  READ_RESTAURANT_TABLE,
+  UPDATE_RESTAURANT_TABLE,
+  DELETE_RESTAURANT_TABLE,
+
   // Category management
   CREATE_CATEGORY,
   READ_CATEGORY,
