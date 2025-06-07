@@ -1,6 +1,10 @@
 package com.OrderNet.ProyWebIntegrado.service.order;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -8,6 +12,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.OrderNet.ProyWebIntegrado.dto.order.OrderCreateDTO;
@@ -167,4 +175,39 @@ public class OrderServiceImpl implements OrderService {
     orderRepository.deleteById(id);
   }
 
+  @Override
+  public ByteArrayInputStream generateTodayOrdersExcel() throws IOException {
+    LocalDate today = LocalDate.now();
+    List<Order> orders = orderRepository.findAll().stream()
+        .filter(order -> order.getCreatedAt().toLocalDate().equals(today))
+        .toList();
+
+    try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      Sheet sheet = workbook.createSheet("Órdenes del Día");
+
+      // Encabezado
+      Row header = sheet.createRow(0);
+      String[] columns = { "ID", "Fecha", "Estado", "Mesa", "Mozo", "Total", "Productos" };
+      for (int i = 0; i < columns.length; i++) {
+        header.createCell(i).setCellValue(columns[i]);
+      }
+
+      int rowNum = 1;
+      for (Order order : orders) {
+        for (OrderDetail detail : order.getDetails()) {
+          Row row = sheet.createRow(rowNum++);
+          row.createCell(0).setCellValue(order.getId());
+          row.createCell(1).setCellValue(order.getCreatedAt().toString());
+          row.createCell(2).setCellValue(order.getStatus().toString());
+          row.createCell(3).setCellValue(order.getTable().getNumber());
+          row.createCell(4).setCellValue(order.getWaiter().getName());
+          row.createCell(5).setCellValue(order.getTotal().doubleValue());
+          row.createCell(6).setCellValue(detail.getProduct().getName() + " x" + detail.getQuantity());
+        }
+      }
+
+      workbook.write(out);
+      return new ByteArrayInputStream(out.toByteArray());
+    }
+  }
 }

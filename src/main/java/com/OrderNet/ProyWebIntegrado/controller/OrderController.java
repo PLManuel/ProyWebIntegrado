@@ -1,8 +1,12 @@
 package com.OrderNet.ProyWebIntegrado.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,5 +60,22 @@ public class OrderController {
   public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
     orderService.deleteOrder(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/report/today")
+  public ResponseEntity<byte[]> exportTodayOrdersExcel() {
+    try {
+      ByteArrayInputStream in = orderService.generateTodayOrdersExcel();
+      HttpHeaders headers = new HttpHeaders();
+      headers.add("Content-Disposition", "attachment; filename=ordenes_hoy.xlsx");
+
+      return ResponseEntity.ok()
+          .headers(headers)
+          .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+          .body(in.readAllBytes());
+
+    } catch (IOException e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 }
