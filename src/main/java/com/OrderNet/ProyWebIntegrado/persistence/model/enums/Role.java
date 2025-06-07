@@ -29,6 +29,7 @@ public enum Role {
             Permissions.UPDATE_PRODUCT,
             Permissions.DELETE_PRODUCT,
 
+            Permissions.CREATE_ORDER,
             Permissions.READ_ORDER,
             Permissions.UPDATE_ORDER,
             Permissions.DELETE_ORDER)),
