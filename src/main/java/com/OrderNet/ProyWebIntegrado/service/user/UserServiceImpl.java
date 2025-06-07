@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.base.Strings;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +42,16 @@ public class UserServiceImpl implements UserService {
         .ifPresent(_ -> {
           throw new IllegalArgumentException("El correo ya está registrado");
         });
+
+    if (StringUtils.isBlank(userCreateDTO.getEmail()) || !userCreateDTO.getEmail().contains("@")) {
+      throw new IllegalArgumentException("Correo inválido");
+    }
+
+    if (Strings.isNullOrEmpty(userCreateDTO.getName())) {
+      throw new IllegalArgumentException("Nombre obligatorio");
+    }
+
+    checkArgument(userCreateDTO.getPassword().length() >= 8, "La contraseña debe tener al menos 8 caracteres");
 
     User newUser = User.builder()
         .name(userCreateDTO.getName())

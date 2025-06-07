@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import com.OrderNet.ProyWebIntegrado.dto.order.OrderCreateDTO;
@@ -80,15 +82,17 @@ public class OrderServiceImpl implements OrderService {
     User waiter = userRepository.findById(orderCreateDTO.getWaiterId())
         .orElseThrow(() -> new NoSuchElementException("Mozo no encontrado con ID: " + orderCreateDTO.getWaiterId()));
 
-    // if (waiter.getRole() != Role.WAITER) {
-    //   throw new IllegalArgumentException("El usuario no tiene rol de mozo");
-    // }
+    if (CollectionUtils.isEmpty(orderCreateDTO.getDetails())) {
+      throw new IllegalArgumentException("Debe haber al menos un producto");
+    }
+
+    String notes = ObjectUtils.defaultIfNull(orderCreateDTO.getNotes(), "");
 
     Order order = Order.builder()
         .table(table)
         .waiter(waiter)
         .status(OrderStatus.PENDING)
-        .notes(orderCreateDTO.getNotes())
+        .notes(notes)
         .total(BigDecimal.ZERO)
         .build();
 
