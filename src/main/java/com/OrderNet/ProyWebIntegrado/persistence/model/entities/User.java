@@ -51,6 +51,10 @@ public class User implements UserDetails {
   @Builder.Default
   private Boolean active = true;
 
+  @Column(nullable = false)
+  @Builder.Default
+  private Boolean sessionActive = false;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Role role;

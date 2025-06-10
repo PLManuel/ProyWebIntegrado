@@ -11,6 +11,7 @@ import com.OrderNet.ProyWebIntegrado.dto.auth.AuthResponseDTO;
 import com.OrderNet.ProyWebIntegrado.dto.auth.RefreshTokenRequestDTO;
 import com.OrderNet.ProyWebIntegrado.service.auth.AuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,6 +31,12 @@ public class AuthController {
   public ResponseEntity<AuthResponseDTO> refreshToken(@RequestBody RefreshTokenRequestDTO request) {
     AuthResponseDTO authResponseDTO = authService.refreshToken(request);
     return ResponseEntity.ok(authResponseDTO);
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<String> logout(HttpServletRequest request) {
+    authService.logout(request);
+    return ResponseEntity.ok("Sesión cerrada exitosamente");
   }
 
 }

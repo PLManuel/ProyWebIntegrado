@@ -30,8 +30,6 @@ import com.OrderNet.ProyWebIntegrado.persistence.model.entities.Product;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.RestaurantTable;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.User;
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.OrderStatus;
-// import com.OrderNet.ProyWebIntegrado.persistence.model.enums.Role;
-// import com.OrderNet.ProyWebIntegrado.persistence.repository.OrderDetailRepository;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.OrderRepository;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.ProductRepository;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.RestaurantTableRepository;
@@ -46,7 +44,6 @@ import lombok.RequiredArgsConstructor;
 public class OrderServiceImpl implements OrderService {
 
   private final OrderRepository orderRepository;
-  // private final OrderDetailRepository orderDetailRepository;
   private final RestaurantTableRepository restaurantTableRepository;
   private final UserRepository userRepository;
   private final ProductRepository productRepository;
@@ -89,6 +86,10 @@ public class OrderServiceImpl implements OrderService {
 
     User waiter = userRepository.findById(orderCreateDTO.getWaiterId())
         .orElseThrow(() -> new NoSuchElementException("Mozo no encontrado con ID: " + orderCreateDTO.getWaiterId()));
+
+    if (Boolean.FALSE.equals(waiter.getSessionActive())) {
+      throw new IllegalStateException("El mozo no tiene una sesión activa");
+    }
 
     if (CollectionUtils.isEmpty(orderCreateDTO.getDetails())) {
       throw new IllegalArgumentException("Debe haber al menos un producto");
@@ -185,7 +186,6 @@ public class OrderServiceImpl implements OrderService {
     try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
       Sheet sheet = workbook.createSheet("Órdenes del Día");
 
-      // Encabezado
       Row header = sheet.createRow(0);
       String[] columns = { "ID", "Fecha", "Estado", "Mesa", "Mozo", "Total", "Productos" };
       for (int i = 0; i < columns.length; i++) {

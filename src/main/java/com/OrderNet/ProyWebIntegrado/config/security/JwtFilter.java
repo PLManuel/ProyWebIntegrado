@@ -11,7 +11,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.OrderNet.ProyWebIntegrado.service.auth.JwtService;
 
-import org.springframework.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,18 +27,10 @@ public class JwtFilter extends OncePerRequestFilter {
     this.userDetailsService = userDetailsService;
   }
 
-  private String getToken(HttpServletRequest request) {
-    final String authHeader = request.getHeader(org.springframework.http.HttpHeaders.AUTHORIZATION);
-    if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-      return authHeader.substring(7);
-    }
-    return null;
-  }
-
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    final String token = getToken(request);
+    final String token = jwtService.getToken(request);
 
     if (token != null) {
       System.out.println("token received: " + token);

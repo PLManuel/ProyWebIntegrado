@@ -12,6 +12,7 @@ import com.OrderNet.ProyWebIntegrado.dto.user.UserDTO;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.User;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.UserRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,6 +30,9 @@ public class AuthServiceImpl implements AuthService {
 
     User user = userRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+    user.setSessionActive(true);
+    userRepository.save(user);
 
     String accessToken = jwtService.generateAccessToken(user);
     String refreshToken = jwtService.generateRefreshToken(user);
@@ -68,5 +72,20 @@ public class AuthServiceImpl implements AuthService {
         .build();
 
     return new AuthResponseDTO(newAccessToken, newRefreshToken, userDTO);
+  }
+
+  @Override
+  public void logout(HttpServletRequest request) {
+    String token = jwtService.getToken(request);
+    if (token == null || !jwtService.isTokenValid(token)) {
+      throw new IllegalArgumentException("Token inválido o ausente");
+    }
+
+    String email = jwtService.extractUsername(token);
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+    user.setSessionActive(false);
+    userRepository.save(user);
   }
 }
