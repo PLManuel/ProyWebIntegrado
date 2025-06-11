@@ -41,7 +41,7 @@ public class RestaurantTable {
   private Long id;
 
   @Column(unique = true, nullable = false)
-  private Integer number;
+  private String code;
 
   @Builder.Default
   @Enumerated(EnumType.STRING)

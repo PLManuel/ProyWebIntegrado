@@ -16,7 +16,7 @@ import lombok.Setter;
 @Builder
 public class RestaurantTableDTO {
   private Long id;
-  private Integer number;
+  private String code;
   private TableStatus status;
   private UserDTO userDTO;
 }

@@ -199,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
           row.createCell(0).setCellValue(order.getId());
           row.createCell(1).setCellValue(order.getCreatedAt().toString());
           row.createCell(2).setCellValue(order.getStatus().toString());
-          row.createCell(3).setCellValue(order.getTable().getNumber());
+          row.createCell(3).setCellValue(order.getTable().getCode());
           row.createCell(4).setCellValue(order.getWaiter().getName());
           row.createCell(5).setCellValue(order.getTotal().doubleValue());
           row.createCell(6).setCellValue(detail.getProduct().getName() + " x" + detail.getQuantity());

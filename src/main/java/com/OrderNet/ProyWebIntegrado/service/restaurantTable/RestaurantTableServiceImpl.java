@@ -41,7 +41,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     User waiter = restaurantTable.getWaiter();
     return RestaurantTableDTO.builder()
         .id(restaurantTable.getId())
-        .number(restaurantTable.getNumber())
+        .code(restaurantTable.getCode())
         .status(restaurantTable.getStatus())
         .userDTO(waiter != null ? toUserDTO(waiter) : null)
         .build();
@@ -50,7 +50,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
   @Override
   public RestaurantTableDTO createRestaurantTable(RestaurantTableCreateDTO restaurantTableCreateDTO) {
     RestaurantTable newRestaurantTable = RestaurantTable.builder()
-        .number(restaurantTableCreateDTO.getNumber())
+        .code(restaurantTableCreateDTO.getCode())
         .status(restaurantTableCreateDTO.getStatus())
         .build();
 
@@ -77,8 +77,8 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
     RestaurantTable restaurantTable = restaurantTableRepository.findById(id)
         .orElseThrow(() -> new NoSuchElementException("Mesa no encontrada con ID: " + id));
 
-    if (restaurantTableUpdateDTO.getNumber() != null) {
-      restaurantTable.setNumber(restaurantTableUpdateDTO.getNumber());
+    if (restaurantTableUpdateDTO.getCode() != null) {
+      restaurantTable.setCode(restaurantTableUpdateDTO.getCode());
     }
 
     if (restaurantTableUpdateDTO.getStatus() != null) {
