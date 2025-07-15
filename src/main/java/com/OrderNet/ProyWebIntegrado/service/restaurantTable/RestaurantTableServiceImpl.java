@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.OrderNet.ProyWebIntegrado.dto.restaurantTable.RestaurantTableCreateDTO;
 import com.OrderNet.ProyWebIntegrado.dto.restaurantTable.RestaurantTableDTO;
 import com.OrderNet.ProyWebIntegrado.dto.restaurantTable.RestaurantTableUpdateDTO;
-import com.OrderNet.ProyWebIntegrado.dto.user.UserDTO;
+import com.OrderNet.ProyWebIntegrado.dto.user.UserShortDTO;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.RestaurantTable;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.User;
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.Role;
@@ -27,13 +27,11 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
   private final RestaurantTableRepository restaurantTableRepository;
   private final UserRepository userRepository;
 
-  private UserDTO toUserDTO(User user) {
-    return UserDTO.builder()
+  private UserShortDTO toUserDTO(User user) {
+    return UserShortDTO.builder()
         .id(user.getId())
         .name(user.getName())
         .email(user.getEmail())
-        .active(user.getActive())
-        .role(user.getRole())
         .build();
   }
 
@@ -43,7 +41,7 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
         .id(restaurantTable.getId())
         .code(restaurantTable.getCode())
         .status(restaurantTable.getStatus())
-        .userDTO(waiter != null ? toUserDTO(waiter) : null)
+        .userShortDTO(waiter != null ? toUserDTO(waiter) : null)
         .build();
   }
 
@@ -85,10 +83,10 @@ public class RestaurantTableServiceImpl implements RestaurantTableService {
       restaurantTable.setStatus(restaurantTableUpdateDTO.getStatus());
     }
 
-    if (restaurantTableUpdateDTO.getWaiterId() != null && restaurantTableUpdateDTO.getWaiterId().isPresent()) {
-      Long waiterId = restaurantTableUpdateDTO.getWaiterId().getValue();
+    if (restaurantTableUpdateDTO.getWaiterId() != null) {
+      Long waiterId = restaurantTableUpdateDTO.getWaiterId();
 
-      if (waiterId == null) {
+      if (waiterId == -1) {
         restaurantTable.setWaiter(null);
       } else {
         User user = userRepository.findById(waiterId)
