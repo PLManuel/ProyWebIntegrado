@@ -35,6 +35,9 @@ public enum Role {
             Permissions.DELETE_ORDER)),
 
     WAITER(Set.of(
+            Permissions.READ_USER,
+            Permissions.UPDATE_USER,
+            Permissions.READ_PRODUCT,
             Permissions.CREATE_ORDER,
             Permissions.READ_ORDER,
             Permissions.UPDATE_ORDER,
