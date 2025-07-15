@@ -8,33 +8,50 @@ import org.apache.commons.lang3.StringUtils;
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Strings;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.OrderNet.ProyWebIntegrado.dto.restaurantTable.RestaurantTableDTO;
 import com.OrderNet.ProyWebIntegrado.dto.user.UserCreateDTO;
 import com.OrderNet.ProyWebIntegrado.dto.user.UserDTO;
 import com.OrderNet.ProyWebIntegrado.dto.user.UserUpdateDTO;
+import com.OrderNet.ProyWebIntegrado.persistence.model.entities.RestaurantTable;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.User;
+import com.OrderNet.ProyWebIntegrado.persistence.repository.RestaurantTableRepository;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+  private final RestaurantTableRepository restaurantTableRepository;
   private final PasswordEncoder passwordEncoder;
 
-  private UserDTO toDTO(User user) {
+private UserDTO toDTO(User user) {
     return UserDTO.builder()
         .id(user.getId())
         .name(user.getName())
         .email(user.getEmail())
         .role(user.getRole())
         .active(user.getActive())
+        .sessionActive(user.getSessionActive())
+        .assignedTables(user.getAssignedTables() != null
+            ? user.getAssignedTables().stream()
+                .map(table -> RestaurantTableDTO.builder()
+                    .id(table.getId())
+                    .code(table.getCode())
+                    .status(table.getStatus())
+                    .build())
+                .collect(Collectors.toList())
+            : null)
         .build();
-  }
+}
 
   @Override
   public UserDTO createUser(UserCreateDTO userCreateDTO) {
@@ -110,10 +127,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void deleteUser(Long id) {
-    if (!userRepository.existsById(id)) {
-      throw new NoSuchElementException("No existe un usuario con ID: " + id);
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("No existe un usuario con ID: " + id));
+
+    List<RestaurantTable> assignedTables = restaurantTableRepository.findByWaiter(user);
+    for (RestaurantTable table : assignedTables) {
+      table.setWaiter(null);
     }
-    userRepository.deleteById(id);
+    restaurantTableRepository.saveAll(assignedTables); // opcional, si tu ORM no hace flush automáticamente
+
+    userRepository.delete(user);
   }
 
 }
