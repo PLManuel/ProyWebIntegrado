@@ -2,8 +2,10 @@ package com.OrderNet.ProyWebIntegrado.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.OrderNet.ProyWebIntegrado.dto.order.OrderCreateDTO;
@@ -62,12 +65,15 @@ public class OrderController {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/report/today")
-  public ResponseEntity<byte[]> exportTodayOrdersExcel() {
+  @GetMapping("/report")
+  public ResponseEntity<byte[]> exportOrdersExcel(
+      @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
     try {
-      ByteArrayInputStream in = orderService.generateTodayOrdersExcel();
+      ByteArrayInputStream in = orderService.generateOrdersExcel(startDate, endDate);
       HttpHeaders headers = new HttpHeaders();
-      headers.add("Content-Disposition", "attachment; filename=ordenes_hoy.xlsx");
+      headers.add("Content-Disposition", "attachment; filename=ordenes_" + startDate + "_a_" + endDate + ".xlsx");
 
       return ResponseEntity.ok()
           .headers(headers)
@@ -78,4 +84,5 @@ public class OrderController {
       return ResponseEntity.internalServerError().build();
     }
   }
+
 }

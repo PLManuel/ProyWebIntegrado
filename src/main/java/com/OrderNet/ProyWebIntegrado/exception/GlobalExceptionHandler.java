@@ -3,6 +3,9 @@ package com.OrderNet.ProyWebIntegrado.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,5 +53,35 @@ public class GlobalExceptionHandler {
             "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "error", "Internal Server Error",
             "message", ex.getMessage()));
+  }
+
+  @ExceptionHandler(DisabledException.class)
+  public ResponseEntity<?> handleDisabledException(DisabledException ex, HttpServletRequest request) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+        Map.of(
+            "timestamp", LocalDateTime.now(),
+            "status", HttpStatus.FORBIDDEN.value(),
+            "error", "Forbidden",
+            "message", ex.getMessage()));
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<?> handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+        Map.of(
+            "timestamp", LocalDateTime.now(),
+            "status", HttpStatus.UNAUTHORIZED.value(),
+            "error", "Unauthorized",
+            "message", "Credenciales inválidas"));
+  }
+
+  @ExceptionHandler(UsernameNotFoundException.class)
+  public ResponseEntity<?> handleUsernameNotFound(UsernameNotFoundException ex, HttpServletRequest request) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+        Map.of(
+            "timestamp", LocalDateTime.now(),
+            "status", HttpStatus.UNAUTHORIZED.value(),
+            "error", "Unauthorized",
+            "message", "Usuario no encontrado"));
   }
 }

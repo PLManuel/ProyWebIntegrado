@@ -164,6 +164,41 @@ public class OrderServiceImpl implements OrderService {
       order.setStatus(orderUpdateDTO.getStatus());
     }
 
+    if (orderUpdateDTO.getWaiterId() != null) {
+      User newWaiter = userRepository.findById(orderUpdateDTO.getWaiterId())
+          .orElseThrow(() -> new NoSuchElementException("Mozo no encontrado con ID: " + orderUpdateDTO.getWaiterId()));
+
+      if (!newWaiter.getSessionActive()) {
+        throw new IllegalStateException("El mozo no tiene una sesión activa");
+      }
+
+      order.setWaiter(newWaiter);
+    }
+
+    if (orderUpdateDTO.getDetails() != null) {
+      order.getDetails().size();
+      order.getDetails().forEach(detail -> detail.setOrder(null));
+      order.getDetails().clear();
+      List<OrderDetail> newDetails = new ArrayList<>();
+      BigDecimal newTotal = BigDecimal.ZERO;
+      for (OrderDetailCreateDTO detailDTO : orderUpdateDTO.getDetails()) {
+        Product product = productRepository.findById(detailDTO.getProductId())
+            .orElseThrow(
+                () -> new NoSuchElementException("Producto no encontrado con ID: " + detailDTO.getProductId()));
+
+        OrderDetail newDetail = OrderDetail.builder()
+            .product(product)
+            .quantity(detailDTO.getQuantity())
+            .build();
+
+        newDetail.setOrder(order);
+        newDetails.add(newDetail);
+        newTotal = newTotal.add(product.getPrice().multiply(BigDecimal.valueOf(detailDTO.getQuantity())));
+      }
+      order.getDetails().addAll(newDetails);
+      order.setTotal(newTotal);
+    }
+
     Order updatedOrder = orderRepository.save(order);
     return toDTO(updatedOrder);
   }
@@ -177,14 +212,16 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public ByteArrayInputStream generateTodayOrdersExcel() throws IOException {
-    LocalDate today = LocalDate.now();
+  public ByteArrayInputStream generateOrdersExcel(LocalDate startDate, LocalDate endDate) throws IOException {
     List<Order> orders = orderRepository.findAll().stream()
-        .filter(order -> order.getCreatedAt().toLocalDate().equals(today))
+        .filter(order -> {
+          LocalDate orderDate = order.getCreatedAt().toLocalDate();
+          return !orderDate.isBefore(startDate) && !orderDate.isAfter(endDate);
+        })
         .toList();
 
     try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-      Sheet sheet = workbook.createSheet("Órdenes del Día");
+      Sheet sheet = workbook.createSheet("Órdenes");
 
       Row header = sheet.createRow(0);
       String[] columns = { "ID", "Fecha", "Estado", "Mesa", "Mozo", "Total", "Productos" };

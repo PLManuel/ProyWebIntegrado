@@ -62,8 +62,7 @@ public class Order {
   @JsonBackReference
   private User waiter;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch =
-  FetchType.LAZY)
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @JsonManagedReference
   private List<OrderDetail> details;
 }

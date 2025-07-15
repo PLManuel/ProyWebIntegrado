@@ -2,6 +2,7 @@ package com.OrderNet.ProyWebIntegrado.service.order;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.OrderNet.ProyWebIntegrado.dto.order.OrderCreateDTO;
@@ -19,5 +20,5 @@ public interface OrderService {
 
   void deleteOrder(Long id);
 
-  ByteArrayInputStream generateTodayOrdersExcel() throws IOException;
+  ByteArrayInputStream generateOrdersExcel(LocalDate startDate, LocalDate endDate) throws IOException;
 }
