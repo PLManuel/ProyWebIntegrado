@@ -1,5 +1,7 @@
 package com.OrderNet.ProyWebIntegrado.dto.order;
 
+import java.util.List;
+
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.OrderStatus;
 
 import jakarta.validation.constraints.Size;
@@ -22,5 +24,7 @@ public class OrderUpdateDTO {
   private String notes;
 
   private OrderStatus status;
+  private List<OrderDetailCreateDTO> details;
+  private Long waiterId;
 
 }

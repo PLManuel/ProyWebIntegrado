@@ -1,5 +1,8 @@
 package com.OrderNet.ProyWebIntegrado.dto.user;
 
+import java.util.List;
+
+import com.OrderNet.ProyWebIntegrado.dto.restaurantTable.RestaurantTableDTO;
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.Role;
 
 import lombok.AllArgsConstructor;
@@ -18,5 +21,7 @@ public class UserDTO {
     private String name;
     private String email;
     private Boolean active;
+    private Boolean sessionActive;
     private Role role;
+    private List<RestaurantTableDTO> assignedTables;
 }

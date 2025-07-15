@@ -1,6 +1,6 @@
 package com.OrderNet.ProyWebIntegrado.dto.restaurantTable;
 
-import com.OrderNet.ProyWebIntegrado.dto.user.UserDTO;
+import com.OrderNet.ProyWebIntegrado.dto.user.UserShortDTO;
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.TableStatus;
 
 import lombok.AllArgsConstructor;
@@ -18,5 +18,5 @@ public class RestaurantTableDTO {
   private Long id;
   private String code;
   private TableStatus status;
-  private UserDTO userDTO;
+  private UserShortDTO userShortDTO;
 }

@@ -1,6 +1,5 @@
 package com.OrderNet.ProyWebIntegrado.dto.restaurantTable;
 
-import com.OrderNet.ProyWebIntegrado.dto.NullableField;
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.TableStatus;
 
 import lombok.AllArgsConstructor;
@@ -19,5 +18,5 @@ public class RestaurantTableUpdateDTO {
 
   private TableStatus status;
   
-  private NullableField<Long> waiterId;
+  private Long waiterId;
 }
