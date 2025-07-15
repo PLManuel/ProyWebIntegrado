@@ -1,6 +1,7 @@
 package com.OrderNet.ProyWebIntegrado.service.auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,10 @@ public class AuthServiceImpl implements AuthService {
     User user = userRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
+    if (Boolean.FALSE.equals(user.getActive())) {
+      throw new DisabledException("La cuenta está desactivada");
+    }
+
     user.setSessionActive(true);
     userRepository.save(user);
 
@@ -43,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
         .email(user.getEmail())
         .role(user.getRole())
         .active(user.getActive())
+        .sessionActive(user.getSessionActive())
         .build();
 
     return new AuthResponseDTO(accessToken, refreshToken, userDTO);
@@ -69,6 +75,7 @@ public class AuthServiceImpl implements AuthService {
         .email(user.getEmail())
         .role(user.getRole())
         .active(user.getActive())
+        .sessionActive(user.getSessionActive())
         .build();
 
     return new AuthResponseDTO(newAccessToken, newRefreshToken, userDTO);
