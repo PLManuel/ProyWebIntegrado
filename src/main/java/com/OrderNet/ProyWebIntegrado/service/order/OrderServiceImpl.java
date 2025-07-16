@@ -30,6 +30,7 @@ import com.OrderNet.ProyWebIntegrado.persistence.model.entities.Product;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.RestaurantTable;
 import com.OrderNet.ProyWebIntegrado.persistence.model.entities.User;
 import com.OrderNet.ProyWebIntegrado.persistence.model.enums.OrderStatus;
+import com.OrderNet.ProyWebIntegrado.persistence.model.enums.TableStatus;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.OrderRepository;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.ProductRepository;
 import com.OrderNet.ProyWebIntegrado.persistence.repository.RestaurantTableRepository;
@@ -94,6 +95,8 @@ public class OrderServiceImpl implements OrderService {
     if (CollectionUtils.isEmpty(orderCreateDTO.getDetails())) {
       throw new IllegalArgumentException("Debe haber al menos un producto");
     }
+
+    table.setStatus(TableStatus.OCCUPIED);
 
     String notes = ObjectUtils.defaultIfNull(orderCreateDTO.getNotes(), "");
 
@@ -162,6 +165,17 @@ public class OrderServiceImpl implements OrderService {
 
     if (orderUpdateDTO.getStatus() != null) {
       order.setStatus(orderUpdateDTO.getStatus());
+
+      if (orderUpdateDTO.getStatus() == OrderStatus.COMPLETED) {
+        RestaurantTable table = order.getTable();
+
+        boolean hasOtherActiveOrders = table.getOrders().stream()
+            .anyMatch(o -> !o.getId().equals(order.getId()) && o.getStatus() != OrderStatus.COMPLETED);
+
+        if (!hasOtherActiveOrders) {
+          table.setStatus(TableStatus.AVAILABLE);
+        }
+      }
     }
 
     if (orderUpdateDTO.getWaiterId() != null) {
@@ -205,10 +219,23 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public void deleteOrder(Long id) {
-    if (!orderRepository.existsById(id)) {
-      throw new NoSuchElementException("No existe una orden con ID: " + id);
+    Order order = orderRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Orden no encontrada con ID: " + id));
+
+    RestaurantTable table = order.getTable();
+
+    // Primero eliminamos la orden
+    orderRepository.delete(order);
+
+    // Luego verificamos si quedan otras órdenes activas en esa mesa (sin usar
+    // table.getOrders())
+    boolean hasOtherActiveOrders = orderRepository.existsByTableAndStatusNotAndIdNot(
+        table, OrderStatus.COMPLETED, id);
+
+    if (!hasOtherActiveOrders) {
+      table.setStatus(TableStatus.AVAILABLE);
+      restaurantTableRepository.save(table);
     }
-    orderRepository.deleteById(id);
   }
 
   @Override
